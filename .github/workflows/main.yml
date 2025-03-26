@@ -1,3 +1,4 @@
+```yaml
 name: Chrome Remote Desktop
 
 on: [push, workflow_dispatch]
@@ -9,8 +10,8 @@ jobs:
     steps:
       - name: Descargar Chrome Remote Desktop
         run: |
-          Invoke-WebRequest -Uri "https://dl.google.com/dl/chrome-remote-desktop/install_chrome_remote_desktop.exe" -OutFile "install_chrome_remote_desktop.exe"
-          ./install_chrome_remote_desktop.exe /silent /install
+          Invoke-WebRequest -Uri "https://dl.google.com/edgedl/chrome-remote-desktop/chromeremotedesktophost.msi" -OutFile "chromeremotedesktophost.msi"
+          msiexec /i chromeremotedesktophost.msi /quiet /norestart
       - name: Configurar Chrome Remote Desktop
         run: |
           # Reemplaza <TU_PIN> con un PIN seguro
@@ -23,5 +24,5 @@ jobs:
       - name: Obtener ID de host
         run: |
           # Este paso imprime el ID de host necesario para conectarse desde Chrome Remote Desktop
-          - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" | Select-Object -ExpandProperty "RemoteAccessHostId"
-          
+          Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" | Select-Object -ExpandProperty "RemoteAccessHostId"
+```
