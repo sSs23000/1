@@ -1,4 +1,3 @@
-```yaml
 name: Chrome Remote Desktop
 
 on: [push, workflow_dispatch]
@@ -25,4 +24,3 @@ jobs:
         run: |
           # Este paso imprime el ID de host necesario para conectarse desde Chrome Remote Desktop
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" | Select-Object -ExpandProperty "RemoteAccessHostId"
-```
