@@ -1,22 +1,30 @@
-name: Windows - LiteManager
+name: Chrome Remote Desktop
 
-on:
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 
 jobs:
   build:
-    name: Start Building...
     runs-on: windows-latest
-    timeout-minutes: 9999
 
     steps:
-      - name: Downloading & Installing Essentials
+      - name: Descargar Chrome Remote Desktop
         run: |
-          Invoke-WebRequest -Uri "https://gitlab.com/chamod12/1m_win-10_github_rdp/-/raw/main/Downloads.bat" -OutFile "Downloads.bat"
-          cmd /c Downloads.bat
+          Invoke-WebRequest -Uri "https://dl.google.com/dl/chrome-remote-desktop/install_chrome_remote_desktop.exe" -OutFile "install_chrome_remote_desktop.exe"
+          ./install_chrome_remote_desktop.exe /silent /install
 
-      - name: Connect to LiteManager
-        run: cmd /c show.bat
+      - name: Configurar Chrome Remote Desktop
+        run: |
+          # Reemplaza <TU_PIN> con un PIN seguro
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowClientPairing" -Value 1
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowUiAccessPinless" -Value 1
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostUiAccessPin" -Value "<TU_PIN>"
 
-      - name: Time Counter
-        run: cmd /c loop.bat
+      - name: Iniciar Chrome Remote Desktop
+        run: |
+          Start-Service "chromeremotedesktopsvc"
+
+      - name: Obtener ID de host
+        run: |
+          # Este paso imprime el ID de host necesario para conectarse desde Chrome Remote Desktop
+          Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" | Select-Object -ExpandProperty "RemoteAccessHostId"
+```
