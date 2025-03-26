@@ -1,26 +1,25 @@
 name: Chrome Remote Desktop
-
 on: [push, workflow_dispatch]
-
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
       - name: Descargar Chrome Remote Desktop
         run: |
           Invoke-WebRequest -Uri "https://dl.google.com/edgedl/chrome-remote-desktop/chromeremotedesktophost.msi" -OutFile "chromeremotedesktophost.msi"
           msiexec /i chromeremotedesktophost.msi /quiet /norestart
+      
       - name: Configurar Chrome Remote Desktop
         run: |
-          # Reemplaza <TU_PIN> con un PIN seguro
+          # Reemplaza <1996> con un PIN seguro
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowClientPairing" -Value 1
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowUiAccessPinless" -Value 1
-          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostUiAccessPin" -Value "<1996>"
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostUiAccessPin" -Value "1996"
+      
       - name: Iniciar Chrome Remote Desktop
         run: |
           Start-Service "chromeremotedesktopsvc"
+      
       - name: Obtener ID de host
         run: |
-          # Este paso imprime el ID de host necesario para conectarse desde Chrome Remote Desktop
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" | Select-Object -ExpandProperty "RemoteAccessHostId"
