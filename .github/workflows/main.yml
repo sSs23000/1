@@ -17,7 +17,7 @@ jobs:
           # Reemplaza <TU_PIN> con un PIN seguro
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowClientPairing" -Value 1
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowUiAccessPinless" -Value 1
-          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostUiAccessPin" -Value "<TU_PIN>"
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostUiAccessPin" -Value "<1996>"
 
       - name: Iniciar Chrome Remote Desktop
         run: |
