@@ -11,20 +11,17 @@ jobs:
         run: |
           Invoke-WebRequest -Uri "https://dl.google.com/dl/chrome-remote-desktop/install_chrome_remote_desktop.exe" -OutFile "install_chrome_remote_desktop.exe"
           ./install_chrome_remote_desktop.exe /silent /install
-
       - name: Configurar Chrome Remote Desktop
         run: |
           # Reemplaza <TU_PIN> con un PIN seguro
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowClientPairing" -Value 1
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowUiAccessPinless" -Value 1
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostUiAccessPin" -Value "<1996>"
-
       - name: Iniciar Chrome Remote Desktop
         run: |
           Start-Service "chromeremotedesktopsvc"
-
       - name: Obtener ID de host
         run: |
           # Este paso imprime el ID de host necesario para conectarse desde Chrome Remote Desktop
-          Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" | Select-Object -ExpandProperty "RemoteAccessHostId"
-```
+          - Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" | Select-Object -ExpandProperty "RemoteAccessHostId"
+          
