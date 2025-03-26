@@ -4,22 +4,28 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Descargar Chrome Remote Desktop
+      - name: Descargar e instalar Chrome Remote Desktop
         run: |
-          Invoke-WebRequest -Uri "https://dl.google.com/edgedl/chrome-remote-desktop/chromeremotedesktophost.msi" -OutFile "chromeremotedesktophost.msi"
-          msiexec /i chromeremotedesktophost.msi /quiet /norestart
-      
+          Invoke-WebRequest -Uri "https://dl.google.com/edgedl/chrome-remote-desktop/chromeremotedesktophost.msi" -OutFile "$env:TEMP\chromeremotedesktophost.msi"
+          Start-Process msiexec -ArgumentList "/i $env:TEMP\chromeremotedesktophost.msi /quiet /norestart" -Wait
+
       - name: Configurar Chrome Remote Desktop
         run: |
-          # Reemplaza <1996> con un PIN seguro
+          # Crear estructura de registro necesaria
+          New-Item -Path "HKLM:\SOFTWARE\Policies\Google" -Name "Chrome" -Force
+          New-Item -Path "HKLM:\SOFTWARE\Policies\Google\Chrome" -Name "RemoteAccessHost" -Force
+          
+          # Configurar políticas
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowClientPairing" -Value 1
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostAllowUiAccessPinless" -Value 1
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostUiAccessPin" -Value "1996"
-      
-      - name: Iniciar Chrome Remote Desktop
+
+      - name: Reiniciar servicio
         run: |
-          Start-Service "chromeremotedesktopsvc"
-      
+          Restart-Service "chromeremotedesktopsvc" -Force
+
       - name: Obtener ID de host
         run: |
-          Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" | Select-Object -ExpandProperty "RemoteAccessHostId"
+          # Esperar a que se genere el ID
+          Start-Sleep -Seconds 10
+          Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Google\Chrome\RemoteAccessHost" -Name "RemoteAccessHostId" -ErrorAction SilentlyContinue
